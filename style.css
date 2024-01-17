@@ -1,0 +1,44 @@
+img {
+    height: 300px;
+    width: 300px;
+}
+h2 {
+    max-width: 300px;
+    word-wrap: break-word;
+    text-align: center;
+}
+
+#maincontainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
+#buttoncontainer {
+    display: flex;
+    flex-direction: row;
+    gap: 50px;
+}
+
+.buttons {
+    height: 40px;
+    width: 150px;
+    font-size: large;
+    border-radius: 10px;
+    background-color: chocolate;
+    color: aliceblue;
+}
+
+.buttons:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}

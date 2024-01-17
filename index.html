@@ -3,20 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Rick and Morty Characters</title>
     <script src="script.js"></script>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Deneme API</h1>
-    <input type="button" onclick="prev()" value="önceki" />
-    <input type="button" onclick="next()" value="sonraki" />
-    <div class="container">
-        <!-- <div class="character-card">
-            <img src="https://rickandmortyapi.com/api/character/avatar/22.jpeg" />
-            <h2>Aqua Morty(Humanoid)</h2>
-        </div> -->
-
+    <div id="maincontainer">
+        <h1>Rick and Morty Characters</h1>
+        <div id="buttoncontainer">
+            <input class="buttons" id="previousButton" type="button" onclick="prev()" value="Previous" />
+            <input class="buttons" id="nextButton" type="button" onclick="next()" value="Next" />
+        </div>
         
+        <div class="container">
+
+            
+        </div>
     </div>
+    
 </body>
 </html>
