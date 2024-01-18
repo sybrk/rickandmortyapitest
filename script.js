@@ -88,6 +88,9 @@ let creatingPage = {
             apiResult.info.prev === null ? prevButton.disabled = true : prevButton.disabled = false;
             apiResult.info.next === null ? nextButton.disabled = true : nextButton.disabled = false;
 
+            let pageNumber = document.getElementById("showingPage");
+            apiResult.info.next === null ? pageNumber.textContent = apiResult.info.pages : pageNumber.textContent = apiResult.info.next.split("page=")[1] - 1;
+
         });
         
     }
@@ -104,6 +107,13 @@ function prev() {
     creatingPage.generateMylist(apiResult.info.prev);
 }
 
+function lastPage() {
+    creatingPage.generateMylist(`https://rickandmortyapi.com/api/character?page=${apiResult.info.pages}`);
+}
+
+function firstPage() {
+    creatingPage.generateMylist(`https://rickandmortyapi.com/api/character?page=1`);
+}
 //document events
 document.addEventListener('DOMContentLoaded', function () {
     creatingPage.generateMylist();
