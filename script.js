@@ -3,6 +3,46 @@
 let apiResult = {};
 
 //objects
+
+let cache = {
+    data: {},
+    checkData: function(pageNum) {
+        return cache.data[pageNum.toString()] !== undefined;
+    },
+    addData: function(pageNum, content) {
+        let keys = Object.keys(cache.data);
+        keys.sort((a,b) => a-b)
+        // if there are more than 10 keys, delete the smallest key to avoid having a big cache
+        if (keys.length === 10) {
+            let smallestKey = keys[0];
+            delete cache.data[smallestKey];
+            console.log(`deleted the key ${smallestKey}`)
+        }
+        cache.data[pageNum.toString()] = content;
+        
+
+        
+    },
+    getData: function(pageNum) {
+        return cache.data[pageNum.toString()];
+    },
+    allData: function() {
+        let result = [];
+        let tmp_values = Object.values(cache.data);
+        for (let i = 0; i < tmp_values.length; i++) {
+            let item = tmp_values[i].results;
+            result.push(...item)
+        }
+        return result;
+    },
+    searchData: function() {
+        let searchInput = document.getElementById("searchInput").value.toUpperCase()
+        let searchTerm = searchInput.toUpperCase();
+        // since fillContainerWitdhData accepsts an object we create the same object structure here.
+        let filterResult =  {results: cache.allData().filter(item => item.name.toUpperCase().includes(searchTerm))};
+        creatingPage.fillContainerWithData(filterResult);
+    }
+}
 let data = {
     // I will use url parameter to get pages dynamically
     getData: function (url = `https://rickandmortyapi.com/api/character`, cb) {
@@ -65,13 +105,13 @@ let creatingPage = {
     
         return myDiv;
     },
-    fillContainerWithData: function(dataArray){
+    fillContainerWithData: function(dataObject){
         let _self = this;
         let myContainer = document.getElementsByClassName('container')[0]
         // we clean container before adding new content.
         myContainer.innerHTML = "";
-        for (let i = 0; i < dataArray.results.length; i++) {
-            const characterData = dataArray.results[i];
+        for (let i = 0; i < dataObject.results.length; i++) {
+            const characterData = dataObject.results[i];
             let myDiv = _self.makeDivForCharacterCard(characterData);
             domHelper.appendElement(myContainer, myDiv);
         }
@@ -80,19 +120,28 @@ let creatingPage = {
         let _self = this;
         data.getData(url, function(result){
             apiResult = JSON.parse(result);
+            dataToUse = apiResult;
+            let showPage = showingPage(apiResult);
+            // check if data is available in cache
+            if (cache.checkData(showPage) === false) {
+                console.log("this is from api")
+                cache.addData(showPage, apiResult);
+            }
+            else {
+                dataToUse = cache.getData(showPage)
+                console.log("this is from cache")
+            }
             _self.fillContainerWithData(apiResult);
             // we disable buttons if next/prev url from api info is null.
             let nextButton = document.getElementById("nextButton");
             let prevButton = document.getElementById("previousButton");
             // we check next/previous urls dynamically from api info.
-            apiResult.info.prev === null ? prevButton.disabled = true : prevButton.disabled = false;
-            apiResult.info.next === null ? nextButton.disabled = true : nextButton.disabled = false;
+            dataToUse.info.prev === null ? prevButton.disabled = true : prevButton.disabled = false;
+            dataToUse.info.next === null ? nextButton.disabled = true : nextButton.disabled = false;
 
             let pageNumber = document.getElementById("showingPage");
-            apiResult.info.next === null ? pageNumber.textContent = apiResult.info.pages : pageNumber.textContent = apiResult.info.next.split("page=")[1] - 1;
-
+            pageNumber.textContent = showPage;
         });
-        
     }
 }
 
@@ -113,6 +162,10 @@ function lastPage() {
 
 function firstPage() {
     creatingPage.generateMylist(`https://rickandmortyapi.com/api/character?page=1`);
+}
+
+function showingPage(dataResult) {
+    return dataResult.info.next === null ? dataResult.info.pages : dataResult.info.next.split("page=")[1] - 1;
 }
 //document events
 document.addEventListener('DOMContentLoaded', function () {

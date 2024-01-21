@@ -23,11 +23,23 @@ h2 {
     gap: 20px;
 }
 
+#searchContainer {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    align-items: center;
+}
+
 #buttoncontainer {
     display: flex;
     flex-direction: row;
     gap: 50px;
     align-items: center;
+}
+#searchInput {
+    height: 35px;
+    width: 200px;
+    font-size: large;
 }
 
 .buttons {
@@ -42,4 +54,16 @@ h2 {
 .buttons:disabled {
     opacity: 0.6;
     cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+    #buttoncontainer, #searchContainer {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+    h2 {
+        margin: auto;
+    }
+    
 }

@@ -10,8 +10,12 @@
 <body>
     <div id="maincontainer">
         <h1>Rick and Morty Characters</h1>
-        
+        <div id="searchContainer">
+            <input class="search" id="searchInput" type="text" />
+            <input class="buttons" id="searchButton" type="button" onclick="cache.searchData()" value="Search" />
+        </div>
         <div id="buttoncontainer">
+            
             <input class="buttons" id="firstPageButton" type="button" onclick="firstPage()" value="First" />
             <input class="buttons" id="previousButton" type="button" onclick="prev()" value="Previous" />
             <h2 id="showingPage"></h2>
