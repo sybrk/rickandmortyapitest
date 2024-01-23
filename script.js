@@ -1,7 +1,6 @@
 //globals
 
-let apiResult = {};
-
+let dataToUse;
 //objects
 
 let cache = {
@@ -45,34 +44,16 @@ let cache = {
 }
 let data = {
     // I will use url parameter to get pages dynamically
-    getData: function (url = `https://rickandmortyapi.com/api/character`, cb) {
-        var xhr = new XMLHttpRequest();
-        // we need to set this to false to avoid errors in CORS.
-        xhr.withCredentials = false;
-
-        xhr.addEventListener("readystatechange", function() {
-            if(this.readyState === 4) {
-                cb(this.responseText);
-            }
-        });
-
-        xhr.open("GET", url);
-        xhr.send();
-
-    },
-    getDataAsync : function(){
-        return new Promise((resolve, reject )=> {
-            try {
-                data.getData(function(result){
-                    resolve(result);
-                });    
-            } catch (error) {
-                console.log('error', error);
-                reject(error);
-            }
-        });
+    getData: async function (url = `https://rickandmortyapi.com/api/character`) {
+        try {
+            let response = await fetch(url);
+            let result = await response.json();
+            return result;
+        }
+        catch (error) {
+            console.log('Error', error)
+        }
     }
-
 };
 
 let domHelper = {
@@ -116,48 +97,46 @@ let creatingPage = {
             domHelper.appendElement(myContainer, myDiv);
         }
     },
-    generateMylist: function (url){
+    generateMylist: async function (url){
         let _self = this;
-        data.getData(url, function(result){
-            apiResult = JSON.parse(result);
-            dataToUse = apiResult;
-            let showPage = showingPage(apiResult);
-            // check if data is available in cache
-            if (cache.checkData(showPage) === false) {
-                console.log("this is from api")
-                cache.addData(showPage, apiResult);
-            }
-            else {
-                dataToUse = cache.getData(showPage)
-                console.log("this is from cache")
-            }
-            _self.fillContainerWithData(apiResult);
-            // we disable buttons if next/prev url from api info is null.
-            let nextButton = document.getElementById("nextButton");
-            let prevButton = document.getElementById("previousButton");
-            // we check next/previous urls dynamically from api info.
-            dataToUse.info.prev === null ? prevButton.disabled = true : prevButton.disabled = false;
-            dataToUse.info.next === null ? nextButton.disabled = true : nextButton.disabled = false;
+        dataToUse = await data.getData(url);
+        
+        let showPage = showingPage(dataToUse);
+        // check if data is available in cache
+        if (cache.checkData(showPage) === false) {
+            console.log("this is from api")
+            cache.addData(showPage, dataToUse);
+        }
+        else {
+            dataToUse = cache.getData(showPage)
+            console.log("this is from cache")
+        }
+        _self.fillContainerWithData(dataToUse);
+        // we disable buttons if next/prev url from api info is null.
+        let nextButton = document.getElementById("nextButton");
+        let prevButton = document.getElementById("previousButton");
+        // we check next/previous urls dynamically from api info.
+        dataToUse.info.prev === null ? prevButton.disabled = true : prevButton.disabled = false;
+        dataToUse.info.next === null ? nextButton.disabled = true : nextButton.disabled = false;
 
-            let pageNumber = document.getElementById("showingPage");
-            pageNumber.textContent = showPage;
-        });
+        let pageNumber = document.getElementById("showingPage");
+        pageNumber.textContent = showPage;;
     }
 }
 
 
 function next() {
     
-    creatingPage.generateMylist(apiResult.info.next);
+    creatingPage.generateMylist(dataToUse.info.next);
 }
 
 function prev() {
 
-    creatingPage.generateMylist(apiResult.info.prev);
+    creatingPage.generateMylist(dataToUse.info.prev);
 }
 
 function lastPage() {
-    creatingPage.generateMylist(`https://rickandmortyapi.com/api/character?page=${apiResult.info.pages}`);
+    creatingPage.generateMylist(`https://rickandmortyapi.com/api/character?page=${dataToUse.info.pages}`);
 }
 
 function firstPage() {
