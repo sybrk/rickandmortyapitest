@@ -53,6 +53,12 @@ let data = {
         catch (error) {
             console.log('Error', error)
         }
+    },
+    searchData: async function() {
+        let searchInput = document.getElementById("searchInput").value
+        let searchURL = `https://rickandmortyapi.com/api/character?name=`;
+        let searchResult =  await data.getData(searchURL + searchInput);
+        creatingPage.fillContainerWithData(searchResult)
     }
 };
 
